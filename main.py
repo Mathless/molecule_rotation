@@ -36,10 +36,11 @@ def convert_to_graph(raw) -> Graph:
 
     aid1 = data['PC_Compounds'][0]['bonds']['aid1']
     aid2 = data['PC_Compounds'][0]['bonds']['aid2']
+    order = data['PC_Compounds'][0]['bonds']['order']
     coords = data['PC_Compounds'][0]['coords'][0]['conformers'][0]
     for i in range(amount):
-        bonds[aid1[i]-1].append(aid2[i]-1)
-        bonds[aid2[i]-1].append(aid1[i]-1)
+        bonds[aid1[i]-1].append([aid2[i]-1, order[i]])
+        bonds[aid2[i]-1].append([aid1[i]-1, order[i]])
         atoms.append(Atom(coords['x'][i], coords['y'][i], coords['z'][i]))
 
     graph = Graph(atoms, bonds)
