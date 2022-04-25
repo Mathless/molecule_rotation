@@ -24,51 +24,46 @@ class Graph:
         self.bonds = bonds
         self.order = order
 
-    def __isReachable(self, s, d, graph):
-        # Mark all the vertices as not visited
+    @staticmethod
+    def __is_reachable(s: int, d: int, graph: dict):
         visited = [False] * (len(graph.keys()))
-
-        # Create a queue for BFS
         queue = [s]
-
-        # Mark the source node as visited and enqueue it
         visited[s] = True
-
         while queue:
-
-            # Dequeue a vertex from queue
             n = queue.pop(0)
-
-            # If this adjacent node is the destination node,
-            # then return true
             if n == d:
                 return True
-
-            #  Else, continue to do BFS
             for i in graph[n]:
                 if not visited[i]:
                     queue.append(i)
                     visited[i] = True
-        # If BFS is complete without visited d
         return False
 
-    def is_edge_in_cycle(self, a, b):
+    def is_edge_in_cycle(self, a: int, b: int):
+        """Возвращает False, если ребро содержится в цикле или такого ребра нет."""
         if a not in self.bonds.keys() or b not in self.bonds[a]:
             return False
-
         self.bonds[a].remove(b)
-        res = self.__isReachable(a, b, self.bonds)
+        res = self.__is_reachable(a, b, self.bonds)
         self.bonds[a].append(b)
         return res
 
     def find_good_edges(self):
+        "Возвращает множество(set) кортежей(tuple). Где кортеж состоит из двух элементов "
         good_edges = set()
         for el in self.bonds.keys():
-            for neigbour in self.bonds[el]:
-                if len(self.bonds[el]) > 1 and len(self.bonds[neigbour]) > 1 and self.order[el][
-                    neigbour] == 1 and not self.is_edge_in_cycle(el, neigbour):
-                    good_edges.add(tuple(sorted([el, neigbour])))
+            for neighbour in self.bonds[el]:
+                if self.is_edge_good(el, neighbour):
+                    good_edges.add(tuple(sorted([el, neighbour])))
         return good_edges
+
+    def is_edge_good(self, el: int, neighbour: int):
+        """Проверяет, что ребро удовлетворяет следующим свойствам:
+        1) Вершины на концах не являются висячими
+        2) Порядок ребра - 1
+        3) Ребро не принадлежит циклам"""
+        return len(self.bonds[el]) > 1 and len(self.bonds[neighbour]) > 1 and self.order[el][
+            neighbour] == 1 and not self.is_edge_in_cycle(el, neighbour)
 
 
 # Recieve JSON representation of molecule by HTTP Request
@@ -116,5 +111,6 @@ if __name__ == '__main__':
     for atom in graph.atoms: print(atom)
     print(graph.bonds)
 
-    # TODO: find single bonds
+    # TODO: В идеале бы ещё тесты написать, но пофиг
+    # Выводит 5 рёбер, если посмотреть на картинку в 3d там действительно 3 подходящих ребра
     print(graph.find_good_edges())
