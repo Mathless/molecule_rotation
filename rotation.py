@@ -5,21 +5,22 @@ from vector import CVector
 
 DEBUG = 0
 
+
 # Rotate one vertex around one edge
 def rotateVertex(verticies, vertexInd, edge, angle):
     vertex = CVector(verticies[vertexInd])
     edgeS = CVector(verticies[edge[0]])
     edgeF = CVector(verticies[edge[1]])
-    vector = edgeF - edgeS                          # edge vector
-    e = vector * (1 / vector.norm())                # unit vector
-    offset = edgeF                                  # offset from coord. system origin
-    c, s, v = cos(angle), sin(angle), 1-cos(angle)  # cosine, sine, versine
-    rotation = Matrix([                             # rotation matrix
-        [v*e.x**2+c, v*e.x*e.y-e.z*s, v*e.x*e.z+e.y*s],
-        [v*e.x*e.y+e.z*s, v*e.y**2+c, v*e.y*e.z-e.x*s],
-        [v*e.x*e.z-e.y*s, v*e.y*e.z+e.x*s, v*e.z**2+c]
+    vector = edgeF - edgeS  # edge vector
+    e = vector * (1 / vector.norm())  # unit vector
+    offset = edgeF  # offset from coord. system origin
+    c, s, v = cos(angle), sin(angle), 1 - cos(angle)  # cosine, sine, versine
+    rotation = Matrix([  # rotation matrix
+        [v * e.x ** 2 + c, v * e.x * e.y - e.z * s, v * e.x * e.z + e.y * s],
+        [v * e.x * e.y + e.z * s, v * e.y ** 2 + c, v * e.y * e.z - e.x * s],
+        [v * e.x * e.z - e.y * s, v * e.y * e.z + e.x * s, v * e.z ** 2 + c]
     ])
-    rotation.round(6)   # round to float
+    rotation.round(6)  # round to float
 
     if DEBUG == 2:
         print(c, s, v)
@@ -27,7 +28,7 @@ def rotateVertex(verticies, vertexInd, edge, angle):
         print(rotation)
 
     vertex, offset = Matrix(vertex), Matrix(offset)
-    result = rotation*(vertex-offset)+offset    # compute changed coordinates
+    result = rotation * (vertex - offset) + offset  # compute changed coordinates
     result = result.transpose().data[0]
     return (result[0], result[1], result[2])
 
@@ -43,6 +44,7 @@ def rotateGraph(vertices, edges, angles, bonds):
                 print(f'index: {index}, edge: {edge}, angle: {angle}\n')
             newVertices[index] = rotateVertex(newVertices, index, edge, angle)
     return newVertices
+
 
 # Find vertices affected by rotation
 def turnedVertices(edge, bonds):
