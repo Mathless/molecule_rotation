@@ -13,7 +13,7 @@ def generate_edges(graph: Graph):
     return edges
 
 
-def create_plot_of_3d_directed_graph(graph: Graph):
+def plot_graph_3d(graph: Graph, stage: str):
     """Визуализирует граф. Открывает окно в браузере."""
     N = len(graph.atoms)
 
@@ -55,7 +55,7 @@ def create_plot_of_3d_directed_graph(graph: Graph):
                 )
 
     layout = go.Layout(
-        title="Title",
+        title="Graph Visualization",
         width=1000,
         height=1000,
         showlegend=False,
@@ -68,22 +68,8 @@ def create_plot_of_3d_directed_graph(graph: Graph):
             t=100
         ),
         hovermode='closest',
-        annotations=[
-            dict(
-                showarrow=False,
-                text="Tyoma molodec",
-                xref='paper',
-                yref='paper',
-                x=0,
-                y=0.1,
-                xanchor='left',
-                yanchor='bottom',
-                font=dict(
-                    size=14
-                )
-            )
-        ], )
+        )
 
     data = [trace1, trace2]
     fig = go.Figure(data=data, layout=layout)
-    py.offline.iplot(fig, filename='molecule_3d')
+    py.offline.plot(fig, filename=f'result\molecule-3d-{stage}.html', auto_open=False)

@@ -6,6 +6,11 @@ class Atom:
         self.y = y
         self.z = z
 
+    def set(self, newCoords) -> None:
+        self.x = newCoords[0]
+        self.y = newCoords[1]
+        self.z = newCoords[2]
+
     def coords(self) -> tuple:
         return (self.x, self.y, self.z)
 
@@ -22,6 +27,11 @@ class Graph:
     
     def get_vertices(self):
         return [atom.coords() for atom in self.atoms]
+    
+    def set_vertices(self, vertices):
+        assert len(vertices) == len(self.atoms)
+        for i in range(len(vertices)):
+            self.atoms[i].set(vertices[i])
 
     @staticmethod
     def __is_reachable(s: int, d: int, graph: dict):

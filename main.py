@@ -1,6 +1,7 @@
 from parse import convert_to_graph, get_info
 from rotation import randAngle, angleConvert, rotateGraph
 from restore import restore
+from plot import plot_graph_3d as plot
 
 MIN_ANGLE = 0.0001745329252
 
@@ -13,27 +14,39 @@ if __name__ == '__main__':
     vertices = graph.get_vertices()
     edges, vertex = graph.select_edges()
     angles = randAngle(len(edges))[1]
-    newVertices = rotateGraph(vertices, edges, angles, graph.bonds)
+    rotated = rotateGraph(vertices, edges, angles, graph.bonds)
 
-    res = restore(vertices, newVertices, graph.bonds, vertex)
+    res = restore(vertices, rotated, graph.bonds, vertex)
     restored = res[2]
 
-    print('Vertex coordinates:')
-    print('{:31} {:37} {:30}'.format("INITIAL", "ROTATED", "RESTORED")) 
-    for i in range(len(vertices)):
-        v, n, r = vertices[i], map(lambda x: round(x, 6), newVertices[i]), map(lambda x: round(x, 6), restored[i])
-        print('({:-8} {:-8} {:-8}) -> ({:-10} {:-10} {:-10}) -> ({:-10} {:-10} {:-10})'.format(*v, *n, *r)) 
+    result = ''
 
-    print('\nInitial rotation angles:')
-    print('{:11} {:8} {:8}'.format("EDGE", "DEG", "RAD"))
+    result += 'Vertex coordinates:\n'
+    result +='{:31} {:37} {:30}\n'.format("INITIAL", "ROTATED", "RESTORED")
+    for i in range(len(vertices)):
+        v, n, r = vertices[i], map(lambda x: round(x, 6), rotated[i]), map(lambda x: round(x, 6), restored[i])
+        result +='({:-8} {:-8} {:-8}) -> ({:-10} {:-10} {:-10}) -> ({:-10} {:-10} {:-10})\n'.format(*v, *n, *r)
+
+    result += '\nInitial rotation angles:\n'
+    result += '{:11} {:8} {:8}\n'.format("EDGE", "DEG", "RAD")
     for i in range(len(edges)):
         angle = angleConvert(angles[i])
-        print('{:8} {:8}° {:10}rad'.format(str(edges[i]), angle, angleConvert(angle, False)))
+        result += '{:8} {:8}° {:10}rad\n'.format(str(edges[i]), angle, angleConvert(angle, False))
 
-    print('\nRestored angles')
-    print('{:11} {:9} {:8}'.format("EDGE", "DEG", "RAD"))
+    result += '\nRestored angles\n'
+    result += '{:11} {:9} {:8}\n'.format("EDGE", "DEG", "RAD")
     for pair in zip(res[0], res[1]):
         if abs(pair[1]) < MIN_ANGLE: continue
         angle = angleConvert(pair[1])
-        print('{:8} {:8}° {:10}rad'.format(str(pair[0]), angle, angleConvert(angle, False)))
+        result += '{:8} {:8}° {:10}rad\n'.format(str(pair[0]), angle, angleConvert(angle, False))
 
+print(result)
+f = open("result/result.txt", "w")
+f.write(result)
+f.close()
+
+plot(graph, "init")
+graph.set_vertices(rotated)
+plot(graph, "rotated")
+graph.set_vertices(restored)
+plot(graph, "restored")
