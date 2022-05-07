@@ -4,12 +4,23 @@ class Matrix:
     def __init__(self, data) -> None:
         if isinstance(data, CVector):
             self.data = Matrix([[data.x, data.y, data.z]]).transpose().data
+        elif isinstance(data, list) and isinstance(data[0], CVector):
+            self.data = Matrix([[vector.x, vector.y, vector.z] for vector in data]).transpose().data
         else:
             self.data = data or []
 
     @staticmethod
-    def E(m, n):
+    def E(m: int, n: int):
         return Matrix([[1 for _ in range(m)] for __ in range(n)])
+
+    def det3x3(self):
+        rows, cols = self.size()
+        if (rows, cols) != (3, 3):
+            raise Exception(f'Matrix is not 3x3, it is {rows}x{cols}')
+        a = self.data
+        return (a[0][0] * (a[1][1] * a[2][2] - a[2][1] * a[1][2])
+           -a[1][0] * (a[0][1] * a[2][2] - a[2][1] * a[0][2])
+           +a[2][0] * (a[0][1] * a[1][2] - a[1][1] * a[0][2]))
 
     def size(self):
         return (len(self.data), len(self.data[0]))
@@ -54,3 +65,18 @@ if __name__ == "__main__":
     print(m3)
     print(e)
     print((m1*(m2-m3)+m3)*e)
+
+    m1 = Matrix([[ -1, 0, 0],[ 0, -1, -1],[ 0, 0, 1]])
+    m2 = Matrix(CVector((-2, 0, 0)))
+    m3 = Matrix([[0, 0, 0]]).transpose()
+    print(m1*(m2-m3)+m3)
+
+    m = Matrix([[1, 0, 0], [0, 10, 0], [0, 0, -1]])
+    print(m.det3x3())
+
+    v1 = CVector((1, 2, 3))
+    v2 = v1*20
+    v3 = v1*300
+    m = Matrix([v1, v2, v3])
+    print(v1, v2, v3)
+    print(m)

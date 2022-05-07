@@ -1,5 +1,5 @@
 from random import uniform
-from math import radians, cos, sin
+from math import degrees, radians, cos, sin
 from matrix import Matrix
 from vector import CVector
 
@@ -60,13 +60,18 @@ def turnedVertices(edge, bonds):
 
 
 # Generate a random angle in degrees and radians
-def randAngle():
-    angle = round(uniform(0, 360), 2)
-    return (angle, radians(angle))
+def randAngle(N=1):
+    angles = [round(uniform(-180, 180), 2) for _ in range(N)]
+    return (angles, list(map(radians, angles)))
+
+def angleConvert(angle, isRad = True):
+    return round(degrees(angle), 2) if isRad else round(radians(angle), 6)
+
 
 
 if __name__ == "__main__":
-    print(randAngle())
+    DEBUG = 2
+    print(randAngle(4))
     verticies = [(0, 2, 0), (0, 2, 3), (0, 4, 3), (0, 4, 5)]
     edges = [(1, 2), (0, 1)]
     angles = [radians(90), radians(90)]
@@ -74,3 +79,9 @@ if __name__ == "__main__":
     print(turnedVertices(edges[1], bonds))
     print(rotateVertex(verticies, 3, edges[0], angles[0]))
     print(rotateGraph(verticies, edges, angles, bonds))
+
+    vertices = [(0, 0, 0), (0, 0, 4), (0, 2, 5), (3, 2, 3)]
+    edges = [(1, 2), (0, 1)]
+    angles = [radians(180), radians(-90)]
+    bonds = {0: [1], 1: [0, 2], 2: [1, 3], 3: [2]}
+    print(rotateGraph(vertices, edges, angles, bonds))
