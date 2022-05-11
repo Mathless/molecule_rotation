@@ -3,13 +3,7 @@ from matrix import Matrix
 from vector import CVector
 from rotation import rotateGraph
 from math import acos
-
-# Singular value decomposition
-def SVD(matrix: Matrix):
-    M = np.array(matrix.data)
-    U, S, Vt = np.linalg.svd(M)
-    U, S, Vt = Matrix(U.tolist()), Matrix(S.tolist()), Matrix(Vt.tolist())
-    return U, S, Vt
+from SVD import svd
 
 # Kabsch algorithm for 3dim points, translation given
 def Kabsch3D(A: Matrix, B: Matrix, dt: Matrix):
@@ -82,23 +76,9 @@ def update_graph(c1, c2, v, P, Q, bonds):
 
 # Restores the graph by rotating it
 # Returns list of edges to be turned and list of angles
-def restore(old_coordinates, new_coordinates, bonds, vertex = -1):
+def restore(old_coordinates, new_coordinates, bonds, vertex = 1):
     P, Q = old_coordinates, new_coordinates
     edges, angles = [],[]
-
-    # Find unchanged vertex
-    #! Doesn't work, supposed to pass vertex through args
-    if vertex == -1:
-        for i in range(len(P)):
-            if P[i] == Q[i]:
-                found = True
-                for v in bonds[i]:
-                    if P[v] != Q[v]:
-                        found = False
-                        break
-                if found:
-                    vertex = i
-                    break
     
     if vertex >= 0:
         visited = [vertex]
@@ -121,6 +101,12 @@ def restore(old_coordinates, new_coordinates, bonds, vertex = -1):
                                     angles.append(a)
     return edges, angles, Q
 
+# Singular value decomposition
+def SVD(matrix: Matrix):
+    M = np.array(matrix.data)
+    U, S, Vt = np.linalg.svd(M)
+    U, S, Vt = Matrix(U.tolist()), Matrix(S.tolist()), Matrix(Vt.tolist())
+    return U, S, Vt
 
 if __name__ == "__main__":
     bonds = {0: [1], 1: [0, 2], 2: [1, 3], 3: [2]}
