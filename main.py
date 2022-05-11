@@ -6,7 +6,7 @@ from plot import plot_graph_3d as plot
 MIN_ANGLE = 0.0001745329252
 
 if __name__ == '__main__':
-    name = 'aspirin'
+    name = 'Antazoline'
     raw = get_info(name)
     graph = convert_to_graph(raw)
     graph.find_good_edges()
@@ -30,15 +30,15 @@ if __name__ == '__main__':
     result += '\nInitial rotation angles:\n'
     result += '{:11} {:8} {:8}\n'.format("EDGE", "DEG", "RAD")
     for i in range(len(edges)):
-        angle = angleConvert(angles[i])
-        result += '{:8} {:8}° {:10}rad\n'.format(str(edges[i]), angle, angleConvert(angle, False))
+        rad_angle, angle = angleConvert(angles[i], True, False), angleConvert(angles[i])
+        result += '{:8} {:8}° {:10}rad\n'.format(str(edges[i]), angle, rad_angle)
 
     result += '\nRestored angles\n'
     result += '{:11} {:9} {:8}\n'.format("EDGE", "DEG", "RAD")
     for pair in zip(res[0], res[1]):
         if abs(pair[1]) < MIN_ANGLE: continue
-        angle = angleConvert(pair[1])
-        result += '{:8} {:8}° {:10}rad\n'.format(str(pair[0]), angle, angleConvert(angle, False))
+        rad_angle, angle = angleConvert(pair[1], True, False), angleConvert(pair[1])
+        result += '{:8} {:8}° {:10}rad\n'.format(str(pair[0]), angle, rad_angle)
 
 print(result)
 f = open("result/result.txt", "w")

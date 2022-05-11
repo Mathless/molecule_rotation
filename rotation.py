@@ -3,9 +3,6 @@ from math import degrees, radians, cos, sin
 from matrix import Matrix
 from vector import CVector
 
-DEBUG = 0
-
-
 # Rotate one vertex around one edge
 def rotateVertex(verticies, vertexInd, edge, angle):
     vertex = CVector(verticies[vertexInd])
@@ -22,11 +19,6 @@ def rotateVertex(verticies, vertexInd, edge, angle):
     ])
     rotation.round(6)  # round to float
 
-    if DEBUG == 2:
-        print(c, s, v)
-        print(vertex, e, offset)
-        print(rotation)
-
     vertex, offset = Matrix(vertex), Matrix(offset)
     result = rotation * (vertex - offset) + offset  # compute changed coordinates
     result = result.transpose().data[0]
@@ -39,9 +31,6 @@ def rotateGraph(vertices, edges, angles, bonds):
     for edge, angle in zip(edges, angles):
         if not edge: break
         for index in turnedVertices(edge, bonds):
-            if DEBUG >= 1:
-                print(f'Vertices: {newVertices}')
-                print(f'index: {index}, edge: {edge}, angle: {angle}\n')
             newVertices[index] = rotateVertex(newVertices, index, edge, angle)
     return newVertices
 
@@ -64,13 +53,12 @@ def randAngle(N=1):
     angles = [round(uniform(-180, 180), 2) for _ in range(N)]
     return (angles, list(map(radians, angles)))
 
-def angleConvert(angle, isRad = True):
-    return round(degrees(angle), 2) if isRad else round(radians(angle), 6)
-
+def angleConvert(angle, isRad = True, needConversion = True):
+    if not needConversion: return round(angle, 6) if isRad else round(angle, 2)
+    else: return round(degrees(angle), 2) if isRad else round(radians(angle), 6)
 
 
 if __name__ == "__main__":
-    DEBUG = 2
     print(randAngle(4))
     verticies = [(0, 2, 0), (0, 2, 3), (0, 4, 3), (0, 4, 5)]
     edges = [(1, 2), (0, 1)]
@@ -84,4 +72,10 @@ if __name__ == "__main__":
     edges = [(1, 2), (0, 1)]
     angles = [radians(180), radians(-90)]
     bonds = {0: [1], 1: [0, 2], 2: [1, 3], 3: [2]}
+    print(rotateGraph(vertices, edges, angles, bonds))
+
+    vertices = [(-2, -2, -2), (0, 0, 0), (-1, 1, 1)]
+    edges = [(0, 1)]
+    angles = [radians(90)]
+    bonds = {0: [1], 1: [0, 2], 2: [1]}
     print(rotateGraph(vertices, edges, angles, bonds))
