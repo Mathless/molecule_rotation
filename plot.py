@@ -12,6 +12,11 @@ def generate_edges(graph: Graph):
             edges.append((node, neighbour))
     return edges
 
+def generate_edges_for_good_edges(graph: Graph):
+    """Выдаёт массив всех рёбер"""
+    edges = list(graph.good_edges)
+    return edges
+
 
 def plot_graph_3d(graph: Graph, stage: str):
     """Визуализирует граф. Открывает окно в браузере."""
@@ -19,22 +24,42 @@ def plot_graph_3d(graph: Graph, stage: str):
 
     Edges = generate_edges(graph)
 
+    good_edges = generate_edges_for_good_edges(graph)
+
     Xn = [graph.atoms[k].x for k in range(N)]
     Yn = [graph.atoms[k].y for k in range(N)]
     Zn = [graph.atoms[k].z for k in range(N)]
     Xe = []
     Ye = []
     Ze = []
+
     for e in Edges:
         Xe += [graph.atoms[e[0]].x, graph.atoms[e[1]].x, None]  # x-coordinates of edge ends
         Ye += [graph.atoms[e[0]].y, graph.atoms[e[1]].y, None]
         Ze += [graph.atoms[e[0]].z, graph.atoms[e[1]].z, None]
 
+    XeGoodEdges = []
+    YeGoodEdges = []
+    ZeGoodEdges = []
+
+    for e in good_edges:
+        XeGoodEdges += [graph.atoms[e[0]].x, graph.atoms[e[1]].x, None]  # x-coordinates of edge ends
+        YeGoodEdges += [graph.atoms[e[0]].y, graph.atoms[e[1]].y, None]
+        ZeGoodEdges += [graph.atoms[e[0]].z, graph.atoms[e[1]].z, None]
+
+    traceGoodEdges = go.Scatter3d(x=XeGoodEdges,
+                          y=YeGoodEdges,
+                          z=ZeGoodEdges,
+                          mode='lines',
+                          line=dict(color='rgb(0,0,0)', width=4),
+                          hoverinfo='none'
+                          )
+
     trace1 = go.Scatter3d(x=Xe,
                           y=Ye,
                           z=Ze,
                           mode='lines',
-                          line=dict(color='rgb(125,125,125)', width=1),
+                          line=dict(color='rgb(125,125,125)', width=2),
                           hoverinfo='none'
                           )
 
@@ -70,6 +95,6 @@ def plot_graph_3d(graph: Graph, stage: str):
         hovermode='closest',
         )
 
-    data = [trace1, trace2]
+    data = [trace1, trace2, traceGoodEdges]
     fig = go.Figure(data=data, layout=layout)
     py.offline.plot(fig, filename=f'result\molecule-3d-{stage}.html', auto_open=False)
