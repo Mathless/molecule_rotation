@@ -12,6 +12,7 @@ def generate_edges(graph: Graph):
             edges.append((node, neighbour))
     return edges
 
+
 def generate_edges_for_good_edges(graph: Graph):
     """Выдаёт массив всех рёбер"""
     edges = list(graph.good_edges)
@@ -48,12 +49,12 @@ def plot_graph_3d(graph: Graph, stage: str):
         ZeGoodEdges += [graph.atoms[e[0]].z, graph.atoms[e[1]].z, None]
 
     traceGoodEdges = go.Scatter3d(x=XeGoodEdges,
-                          y=YeGoodEdges,
-                          z=ZeGoodEdges,
-                          mode='lines',
-                          line=dict(color='rgb(0,0,0)', width=4),
-                          hoverinfo='none'
-                          )
+                                  y=YeGoodEdges,
+                                  z=ZeGoodEdges,
+                                  mode='lines',
+                                  line=dict(color='rgb(0,0,0)', width=4),
+                                  hoverinfo='none'
+                                  )
 
     trace1 = go.Scatter3d(x=Xe,
                           y=Ye,
@@ -62,13 +63,16 @@ def plot_graph_3d(graph: Graph, stage: str):
                           line=dict(color='rgb(125,125,125)', width=2),
                           hoverinfo='none'
                           )
-
+    text = []
+    for i in range(len(Xe)):
+        text.append("Coords: {} {} {}".format(Xe[i], Ye[i], Ze[i]))
     trace2 = go.Scatter3d(x=Xn,
                           y=Yn,
                           z=Zn,
                           mode='markers',
                           name='actors',
                           hoverinfo='text'
+
                           )
 
     axis = dict(showbackground=False,
@@ -93,8 +97,8 @@ def plot_graph_3d(graph: Graph, stage: str):
             t=100
         ),
         hovermode='closest',
-        )
+    )
 
     data = [trace1, trace2, traceGoodEdges]
     fig = go.Figure(data=data, layout=layout)
-    py.offline.plot(fig, filename=f'result\molecule-3d-{stage}.html', auto_open=False)
+    py.offline.plot(fig, filename=f'result/molecule-3d-{stage}.html', auto_open=False)
