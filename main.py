@@ -1,5 +1,5 @@
 from parse import convert_to_graph, get_info
-from rotation import randAngle, angleConvert, rotateGraph
+from rotation import randAngle, shuffleEdges, angleConvert, rotateGraph
 from restore import restore
 from plot import plot_graph_3d as plot
 
@@ -13,14 +13,15 @@ if __name__ == '__main__':
 
     vertices = graph.get_vertices()
     edges, vertex = graph.select_edges()
+    edges = shuffleEdges(edges)
     angles = randAngle(len(edges))[1]
     rotated = rotateGraph(vertices, edges, angles, graph.bonds)
 
     res = restore(vertices, rotated, graph.bonds, vertex)
     restored = res[2]
 
+    # Results output
     result = ''
-
     result += 'Vertex coordinates:\n'
     result +='{:31} {:37} {:30}\n'.format("INITIAL", "ROTATED", "RESTORED")
     for i in range(len(vertices)):

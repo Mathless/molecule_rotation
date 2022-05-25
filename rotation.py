@@ -1,4 +1,4 @@
-from random import uniform
+from random import uniform, sample
 from math import degrees, radians, cos, sin
 from matrix import Matrix
 from vector import CVector
@@ -47,12 +47,16 @@ def turnedVertices(edge, bonds):
                 visited.append(child)
     return visited[2:]
 
+# Shuffle edges in list
+def shuffleEdges(edges):
+    return sample(edges, len(edges))
 
 # Generate a random angle in degrees and radians
 def randAngle(N=1):
     angles = [round(uniform(-180, 180), 2) for _ in range(N)]
     return (angles, list(map(radians, angles)))
 
+# Covert and round angle from degrees to radians and vice versa
 def angleConvert(angle, isRad = True, needConversion = True):
     if not needConversion: return round(angle, 6) if isRad else round(angle, 2)
     else: return round(degrees(angle), 2) if isRad else round(radians(angle), 6)
